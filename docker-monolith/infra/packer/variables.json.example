@@ -1,0 +1,9 @@
+{
+    "project_id": "docker-123456",
+    "source_image": "ubuntu-1604-lts",
+    "machine_type": "n1-standard-1",
+    "image_description": "Dcoekr server",
+    "disk_size": "10",
+    "disk_type": "pd-ssd",
+    "network": "default"
+}

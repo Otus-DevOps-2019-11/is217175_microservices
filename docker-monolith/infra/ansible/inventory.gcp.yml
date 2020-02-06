@@ -1,0 +1,17 @@
+plugin: gcp_compute
+zones:
+  - europe-west4-a
+projects:
+  - docker-123456
+service_account_file: docker-123456.json
+auth_kind: serviceaccount
+scopes:
+ - https://www.googleapis.com/auth/cloud-platform
+ - https://www.googleapis.com/auth/compute.readonly
+keyed_groups:
+  - key: labels.ansible_group
+    separator: ''
+hostnames:
+  - name
+compose:
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP

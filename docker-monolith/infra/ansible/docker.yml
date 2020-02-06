@@ -1,0 +1,71 @@
+---
+- name: Install packages
+  hosts: all
+  vars:
+    user: "appuser"
+  become: true
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - apt-transport-https
+          - ca-certificates
+          - gnupg-agent
+          - software-properties-common
+          - python-pip
+        state: present
+        update_cache: yes
+
+    - name: Install Docker SDK for Python
+      pip:
+          name: docker
+          state: present
+
+    - name: Add docker's official GPG key
+      apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          keyring: docker-ce.gpg
+          state: present
+          validate_certs: yes
+
+    - name: Set up the stable repository
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
+        filename: docker
+        state: present
+        update_cache: yes
+
+    - name: Install docker
+      apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+        allow_unauthenticated: yes
+        install_recommends: yes
+        state: present
+
+      notify: start dockerd
+
+    - name: Enable docker service
+      service:
+          name: docker
+          enabled: yes
+
+    - name: Create docker group
+      group:
+        name: docker
+        state: present
+        system: yes
+
+    - name: Add user to docker group
+      user:
+        name: "{{ user }}"
+        groups: docker
+        append: yes
+
+  handlers:
+    - name: start dockerd
+      service:
+          name: docker
+          state: started

@@ -1,0 +1,6 @@
+project          = "docker-123456"
+instance_count   = 1
+zone             = "europe-west4-a"
+labels           = {"ansible_group": "docekr"}
+disk_image       = "docker"
+public_key_path  = "../gcp_appuser.pub"
