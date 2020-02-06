@@ -1,0 +1,31 @@
+{
+    "variables": {
+        "machine_type": "n1-standard-1"
+    },
+    "builders": [
+        {
+            "type": "googlecompute",
+            "project_id": "{{user `project_id`}}",
+            "image_name": "docker-{{ timestamp }}",
+            "image_family": "docker",
+            "source_image_family": "{{user `source_image`}}",
+            "zone": "europe-west4-a",
+            "ssh_username": "appuser",
+            "machine_type": "{{user `machine_type`}}",
+            "image_description": "{{user `description`}}",
+            "disk_size": "{{user `disk_size`}}",
+            "disk_type": "{{user `disk_type`}}",
+            "network": "{{user `network`}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": ["sudo apt update && sudo apt install python-apt"]
+        },
+        {
+            "type": "ansible",
+            "playbook_file": "ansible/docker.yml"
+        }
+    ]
+}

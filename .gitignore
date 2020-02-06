@@ -1,0 +1,16 @@
+variables.json
+*.tfstate
+*.tfstate.*.backup
+*.tfstate.backup
+*.tfvars
+.terraform/
+*.retry
+jdauphant.nginx/
+vault.key
+.vagrant/
+*.pyc
+.molecule
+.cache
+.pytest_cache
+pyenv/
+cred.json

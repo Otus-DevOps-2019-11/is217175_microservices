@@ -1,0 +1,11 @@
+---
+- name: Run application image in docker
+  hosts: all
+  tasks:
+    - name: Run application container
+      docker_container:
+          name: reddit
+          image: is217175/otus-reddit:1.0
+          detach: true
+          ports: "9292:9292"
+          state: started

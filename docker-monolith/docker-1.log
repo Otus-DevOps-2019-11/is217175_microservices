@@ -1,0 +1,11 @@
+$ docker images
+REPOSITORY                 TAG                 IMAGE ID            CREATED             SIZE
+is217175/ubuntu-tmp-file   latest              adbaed9beb34        27 seconds ago      124MB
+ubuntu                     16.04               96da9143fb18        2 weeks ago         124MB
+nginx                      latest              2bcb04bdb83f        10 months ago       109MB
+hello-world                latest              fce289e99eb9        13 months ago       1.84kB
+
+
+Образ (образ контейнера) - это набор программного обеспечения, который включает в себя все необходимое для запуска приложения:
+код приложения, исполняемые файлы, системные библиотеки и настройки окружения.
+Контейнер - это запущенный в Docker образ, т.е. запущенное приложение в своем окружении, подготовленном при сборке образа.
