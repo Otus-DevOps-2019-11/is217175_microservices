@@ -31,7 +31,8 @@ a39a9add1cbb        25 hours ago        /bin/sh -c #(nop)  CMD ["/start.sh"]    
 - Инвентори *ansible* динамический с плагином *gcp_compute*.
 </details>
 
-## dcoker-3
+## docker-3
+<details>
 1. Для сервисов приложения *comment*, *post* и *ui* были созданы *Dockerfile* для сборки
 ```
 $ docker images
@@ -75,4 +76,25 @@ is217175/ui         2.0                 e203527390ed        22 hours ago        
 ...
 is217175/comment    2.0                 f33965e17c63        19 hours ago        42MB
 is217175/comment    1.0                 b34dbe0c698e        26 hours ago        782MB
+```
+</details>
+
+## docker-4
+1. Установил *docker-compose*
+2. Протестировал создание различные типы сетей в *docker*: *none*, *host*, *bridge*.
+3. Распределил контейнера приложения по нескольким сетям:
+- в *back_net* - *post_db*, *comment*, *post*
+- в *front_net* - *ui*, *comment*, *post*
+4. Написан [docker-compose.yml](src/docker-compose.yml). Контейнера разнесены по сетям из п.п.3, параметризованы с помощью переменных окружения параметры порт для публикации приложения, версия образов, имя пользователя из репозитория в файле [.env](src/.env.example)
+5. Префикс для имени запущенного контейнера задал через переменную окружения *COMPOSE_PROJECT_NAME* в файле [.env](src/.env.example)
+6. С помощью файла [docker-compose.override.yml](src/docker-compose.override.yml) переопределил команду для запуска сервера *puma*, а также для всех проектов папка с кодом приложения монтируется в */app* контейнера.
+
+```
+$ docker-compose ps
+      Name                    Command              State           Ports
+---------------------------------------------------------------------------------
+reddit_comment_1   puma -w 2 --debug               Up
+reddit_post_1      /pyenv/bin/python post_app.py   Up
+reddit_post_db_1   docker-entrypoint.sh mongod     Up      27017/tcp
+reddit_ui_1        puma -w 2 --debug               Up      0.0.0.0:9292->9292/tcp
 ```
