@@ -116,7 +116,7 @@ gitlab/gitlab-runner:latest
 docker exec -it gitlab-runner gitlab-runner register --non-interactive --tag-list "linux,xenial,ubuntu,docker" --run-untagged=true --locked=false --name "my-runner" --url="http://12.34.56.78/" --registration-token "GjJjfhj*jkhfj_8" --executor "docker" --docker-image alpine:latest --docker-volumes "/var/run/docker.sock:/var/run/docker.sock"
 ```
 Определены стадии *build*, *test*, *review* и соответсвующие задачи для них. Теперь при коммите в репозиторий автоматический запускается конвейер для сборки, тестирования и установки сервиса.
-6. Определены окружения *dev*, *stage*, *production*. Окружения stage и production запускаются вручную только для коммитов с тегом (номер версии прилоджения)
+6. Определены окружения *dev*, *stage*, *production*. Окружения stage и production запускаются вручную только для коммитов с тегом (номер версии приложения)
 ```
 ...
 when: manual
@@ -196,4 +196,12 @@ stop_deploy_dev:
 - Создан шаблон *packer* - [gitlab-runner.json](gitlab-ci/packer/gitlab-runner.json). Сценарий *ansible* [packer.yml](gitlab-ci/ansible/packer.yml) устанавливает *docker* и *gitlab-runner* из официальных репозиториев.
 - Шаблон [terraform](gitlab-ci/terraform/) запускает необходимое количество виртуальных машин с вышеуказанным образом. Количество задается переменной *count*. Всем машинам присваивается метка *ansible_group: runners*.
 - Создан сценарий [gitlab-runner_register.yml](gitlab-ci/ansible/gitlab-runner_register.yml), который регистрирует виртуальные машины на gitlab сервере. Использовано динамическое инвентори. Сценарий применяется только к группе *runners*. Регистрационный, администраторский токены указаны в групповых переменных [runners.yml](gitlab-ci/ansible/group_vars/runners.yml) (для наглядности не шифровал).
+```
+cd gitlab-ci
+packer build -var-file packer/variables.json packer/gitlab-runner.json
+cd terraform
+terraform init && terraform apply -auto-approve
+cd ../ansible
+ansible-playbook gitlab-runner_register.yml
+```
 11. Уведомления о событиях приходят на мой канал в Slack https://devops-team-otus.slack.com/archives/CS7GWPFQD
