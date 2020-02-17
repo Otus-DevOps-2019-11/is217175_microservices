@@ -1,0 +1,36 @@
+---
+- name: Install Gitlab runner
+  hosts: all
+  become: true
+  tasks:
+    - name: Install prerequisites
+      apt:
+        name:
+          - gnupg
+          - apt-transport-https
+        state: present
+
+    - name: Add gpg key
+      apt_key:
+          url: https://packages.gitlab.com/gpg.key
+          keyring: /etc/apt/trusted.gpg.d/gitlab-runner.gpg
+          state: present
+
+    - name: Add gitlab-runner repository
+      apt_repository:
+          repo: deb https://packages.gitlab.com/runner/gitlab-runner/ubuntu/ xenial main
+          state: present
+          update_cache: yes
+          filename: gitlab-runner
+
+    - name: Install gillab-runner
+      apt:
+        name: gitlab-runner
+        state: present
+        update_cache: yes
+
+    - name: Enable runner service
+      service:
+        name: gitlab-runner
+        enabled: yes
+        state: started

@@ -80,6 +80,7 @@ is217175/comment    1.0                 b34dbe0c698e        26 hours ago        
 </details>
 
 ## docker-4
+<details>
 1. Установил *docker-compose*
 2. Протестировал создание различные типы сетей в *docker*: *none*, *host*, *bridge*.
 3. Распределил контейнера приложения по нескольким сетям:
@@ -98,3 +99,109 @@ reddit_post_1      /pyenv/bin/python post_app.py   Up
 reddit_post_db_1   docker-entrypoint.sh mongod     Up      27017/tcp
 reddit_ui_1        puma -w 2 --debug               Up      0.0.0.0:9292->9292/tcp
 ```
+</details>
+
+## gitlab-ci-1
+1. С помощью *docker-machine* создан экземпляр виртуальной машины в *GCP*.
+2. На сервер установлен *Gitlab CI* `docker-compose up -d` [docker-compose.yml](gitlab-ci/docker-compose.yml).
+3. В *Gitlab CI* был создан проект *homework* и репозиторий в нем *exmaple*
+4. *CI/CD Pipeline* настроивается файлом [.gitlab-ci.yml](.gitlab-ci.yml).
+5. Запущен и подключен *runner*.
+```
+docker run -d --name gitlab-runner --restart always \
+-v /srv/gitlab-runner/config:/etc/gitlab-runner \
+-v /var/run/docker.sock:/var/run/docker.sock \
+gitlab/gitlab-runner:latest
+
+docker exec -it gitlab-runner gitlab-runner register --non-interactive --tag-list "linux,xenial,ubuntu,docker" --run-untagged=true --locked=false --name "my-runner" --url="http://12.34.56.78/" --registration-token "GjJjfhj*jkhfj_8" --executor "docker" --docker-image alpine:latest --docker-volumes "/var/run/docker.sock:/var/run/docker.sock"
+```
+Определены стадии *build*, *test*, *review* и соответсвующие задачи для них. Теперь при коммите в репозиторий автоматический запускается конвейер для сборки, тестирования и установки сервиса.
+6. Определены окружения *dev*, *stage*, *production*. Окружения stage и production запускаются вручную только для коммитов с тегом (номер версии приложения)
+```
+...
+when: manual
+only:
+    - /^\d+\.\d+\.\d+/
+...
+```
+7. Определено динамически создаваемое окружение, в зависимости от ветки (кроме ветки master). Для этого используется переменная окружения *CI_COMMIT_REF_NAME*
+```
+branch review:
+  stage: review
+  script: echo "Deploy to $CI_ENVIRONMENT_SLUG"
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+    url: http://$CI_ENVIRONMENT_SLUG.example.com
+  only:
+    - branches
+  except:
+    - master
+```
+8. В шаг *build* добавлена сборка приложения:
+```
+build_job:
+  image: docker:19.03.1
+  before_script:
+    - docker info
+  stage: build
+  script:
+    - echo 'Building...'
+    - cd reddit/
+    - docker build -t reddit:$CI_COMMIT_SHORT_SHA .
+```
+На *runner* запускается *docker* контейнер, в котором происходит сборка приложения с использованием [Dockerfile](reddit/Dockerfile). Собранному контейнеру присваивается тег *CI_COMMIT_SHORT_SHA* (укороченный хеш последнего коммита).
+
+В *build_job* можно еще добавить загрузку полученного образа в *docker registry*. Но так как разворачивать приложение я буду на этом же сервере, то образ сразу будет доступен.
+9. Приложение разворачивается в окружении *dev*:
+```
+deploy_dev_job:
+  image: docker:19.03.1
+  stage: review
+  before_script:
+    - echo "Cleanup previous containers..."
+    - docker stop reddit_$CI_ENVIRONMENT_SLUG || true
+    - docker stop mongo_$CI_ENVIRONMENT_SLUG || true
+    - docker network rm reddit_net_$CI_ENVIRONMENT_SLUG || true
+  script:
+    - "Deploying..."
+    - docker network create reddit_net_$CI_ENVIRONMENT_SLUG
+    - docker run --rm -d --name mongo_$CI_ENVIRONMENT_SLUG --network=reddit_net_$CI_ENVIRONMENT_SLUG --network-alias=$DATABASE_URL mongo:latest
+    - docker run --rm -d --name reddit_$CI_ENVIRONMENT_SLUG -p 9292:9292 --network=reddit_net_$CI_ENVIRONMENT_SLUG -e DATABASE_URL=$DATABASE_URL reddit:$CI_COMMIT_SHORT_SHA
+  environment:
+    name: dev
+    url: "http://$CI_SERVER_HOST:9292"
+    on_stop: stop_deploy_dev
+```
+Для работы приложения дополнительно должен быть запущен контейнер с базой *mongodb*, создана сеть и определен псевдоним для подключения приложения к базе. В секции `before_script:` определены команды для очистки результатов предыдущего разворачивания. Если *deploy_dev_job* выполняется успешно, то по ссылке http://$CI_SERVER_HOST:9292 можно проверить работу приложения.
+
+В случае остановки окружения определена задача *stop_deploy_dev*. При ее выполнении удаляются контейнеры и сеть, созданные при разворачивании.
+```
+stop_deploy_dev:
+  image: docker:19.03.1
+  stage: review
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - echo "Destroying environment"
+  script:
+    - docker stop reddit_$CI_ENVIRONMENT_SLUG
+    - docker stop mongo_$CI_ENVIRONMENT_SLUG
+    - docker network rm reddit_net_$CI_ENVIRONMENT_SLUG
+  when: manual
+  environment:
+    name: dev
+    action: stop
+```
+10. Для автоматизации развертывания *gitlab-runner*:
+- Создан шаблон *packer* - [gitlab-runner.json](gitlab-ci/packer/gitlab-runner.json). Сценарий *ansible* [packer.yml](gitlab-ci/ansible/packer.yml) устанавливает *docker* и *gitlab-runner* из официальных репозиториев.
+- Шаблон [terraform](gitlab-ci/terraform/) запускает необходимое количество виртуальных машин с вышеуказанным образом. Количество задается переменной *count*. Всем машинам присваивается метка *ansible_group: runners*.
+- Создан сценарий [gitlab-runner_register.yml](gitlab-ci/ansible/gitlab-runner_register.yml), который регистрирует виртуальные машины на gitlab сервере. Использовано динамическое инвентори. Сценарий применяется только к группе *runners*. Регистрационный, администраторский токены указаны в групповых переменных [runners.yml](gitlab-ci/ansible/group_vars/runners.yml) (для наглядности не шифровал).
+```
+cd gitlab-ci
+packer build -var-file packer/variables.json packer/gitlab-runner.json
+cd terraform
+terraform init && terraform apply -auto-approve
+cd ../ansible
+ansible-playbook gitlab-runner_register.yml
+```
+11. Уведомления о событиях приходят на мой канал в Slack https://devops-team-otus.slack.com/archives/CS7GWPFQD

@@ -1,0 +1,6 @@
+---
+gitlab_server_proto: http
+gitlab_server_ip: 12.34.56.78
+gitlab_admin_token: "BHGiy-jkJguWkyc1oU"
+gitlab_registration_token: "bdkyc15hkE9uWkyR"
+gitlab_tags: "linux,docker"

@@ -1,0 +1,10 @@
+{
+    "project_id": "docker-123456 ",
+    "source_image": "ubuntu-1604-lts",
+    "machine_type": "f1-micro",
+    "image_description": "Gitlab runner server",
+    "tags": "gitlab-runner",
+    "disk_size": "10",
+    "disk_type": "pd-ssd",
+    "network": "default"
+}

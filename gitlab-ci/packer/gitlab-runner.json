@@ -1,0 +1,32 @@
+{
+    "variables": {
+        "machine_type": "f1-small"
+    },
+    "builders": [
+        {
+            "type": "googlecompute",
+            "project_id": "{{user `project_id`}}",
+            "image_name": "gitlab-runner-{{ timestamp }}",
+            "image_family": "gitlab-runner",
+            "source_image_family": "{{user `source_image`}}",
+            "zone": "europe-west4-a",
+            "ssh_username": "runner",
+            "machine_type": "{{user `machine_type`}}",
+            "image_description": "{{user `description`}}",
+            "tags": "{{user `tags`}}",
+            "disk_size": "{{user `disk_size`}}",
+            "disk_type": "{{user `disk_type`}}",
+            "network": "{{user `network`}}"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "inline": ["sudo apt update && sudo apt install python-apt"]
+        },
+        {
+            "type": "ansible",
+            "playbook_file": "ansible/packer.yml"
+        }
+    ]
+}

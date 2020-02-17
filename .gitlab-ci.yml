@@ -1,0 +1,108 @@
+image: ruby:2.4.2
+
+stages:
+  - build
+  - test
+  - review
+  - stage
+  - production
+
+variables:
+  DATABASE_URL: "mongo"
+
+before_script:
+  - cd reddit
+  - bundle install
+
+build_job:
+  image: docker:19.03.1
+  before_script:
+    - docker info
+  stage: build
+  script:
+    - echo 'Building...'
+    - cd reddit/
+    - docker build -t reddit:$CI_COMMIT_SHORT_SHA .
+
+test_unit_job:
+  stage: test
+  services:
+    - mongo:latest
+  script:
+    - ruby simpletest.rb
+
+test_integration_job:
+  stage: test
+  before_script:
+    - echo "Integration test"
+  script:
+    - echo 'Testing 2'
+
+deploy_dev_job:
+  image: docker:19.03.1
+  stage: review
+  before_script:
+    - echo "Cleanup previous containers..."
+    - docker stop reddit_$CI_ENVIRONMENT_SLUG || true
+    - docker stop mongo_$CI_ENVIRONMENT_SLUG || true
+    - docker network rm reddit_net_$CI_ENVIRONMENT_SLUG || true
+  script:
+    - echo "Deploying..."
+    - docker network create reddit_net_$CI_ENVIRONMENT_SLUG
+    - docker run --rm -d --name mongo_$CI_ENVIRONMENT_SLUG --network=reddit_net_$CI_ENVIRONMENT_SLUG --network-alias=$DATABASE_URL mongo:latest
+    - docker run --rm -d --name reddit_$CI_ENVIRONMENT_SLUG -p 9292:9292 --network=reddit_net_$CI_ENVIRONMENT_SLUG -e DATABASE_URL=$DATABASE_URL reddit:$CI_COMMIT_SHORT_SHA
+  environment:
+    name: dev
+    url: "http://$CI_SERVER_HOST:9292"
+    on_stop: stop_deploy_dev
+
+stop_deploy_dev:
+  image: docker:19.03.1
+  stage: review
+  variables:
+    GIT_STRATEGY: none
+  before_script:
+    - echo "Destroying environment"
+  script:
+    - docker stop reddit_$CI_ENVIRONMENT_SLUG
+    - docker stop mongo_$CI_ENVIRONMENT_SLUG
+    - docker network rm reddit_net_$CI_ENVIRONMENT_SLUG
+  when: manual
+  environment:
+    name: dev
+    action: stop
+
+branch review:
+  stage: review
+  before_script:
+    - echo "Test 2"
+  script: echo "Deploy to $CI_ENVIRONMAENT_SLUG"
+  environment:
+    name: branch/$CI_COMMIT_REF_NAME
+    url: http://$CI_ENVIRONMANT_SLUG.example.com
+  only:
+    - branches
+  except:
+    - master
+
+staging:
+  stage: stage
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo "Deploy"
+  environment:
+    name: stage
+    url: https://beta.example.com
+
+production:
+  stage: production
+  when: manual
+  only:
+    - /^\d+\.\d+\.\d+/
+  script:
+    - echo "Deploy"
+  environment:
+    name: production
+    url: https://example.com
