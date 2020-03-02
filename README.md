@@ -243,3 +243,10 @@ modules:
 make prometheus comment ui post # для сборки и загрузки только указанных образов
 make onlypush=1 # для загрузки образов
 ```
+Ссылки на полученные docker-образы:
+- https://hub.docker.com/repository/docker/is217175/ui
+- https://hub.docker.com/repository/docker/is217175/post
+- https://hub.docker.com/repository/docker/is217175/comment
+- https://hub.docker.com/repository/docker/is217175/prometheus
+- https://hub.docker.com/repository/docker/is217175/mongodb_exporter
+- https://hub.docker.com/repository/docker/is217175/blackbox_exporter
