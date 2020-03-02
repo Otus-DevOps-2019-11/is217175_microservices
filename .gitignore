@@ -14,3 +14,4 @@ vault.key
 .pytest_cache
 pyenv/
 cred.json
+.env

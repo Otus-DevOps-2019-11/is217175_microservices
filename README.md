@@ -102,6 +102,7 @@ reddit_ui_1        puma -w 2 --debug               Up      0.0.0.0:9292->9292/tc
 </details>
 
 ## gitlab-ci-1
+<details>
 1. С помощью *docker-machine* создан экземпляр виртуальной машины в *GCP*.
 2. На сервер установлен *Gitlab CI* `docker-compose up -d` [docker-compose.yml](gitlab-ci/docker-compose.yml).
 3. В *Gitlab CI* был создан проект *homework* и репозиторий в нем *exmaple*
@@ -112,7 +113,7 @@ docker run -d --name gitlab-runner --restart always \
 -v /srv/gitlab-runner/config:/etc/gitlab-runner \
 -v /var/run/docker.sock:/var/run/docker.sock \
 gitlab/gitlab-runner:latest
-
+...
 docker exec -it gitlab-runner gitlab-runner register --non-interactive --tag-list "linux,xenial,ubuntu,docker" --run-untagged=true --locked=false --name "my-runner" --url="http://12.34.56.78/" --registration-token "GjJjfhj*jkhfj_8" --executor "docker" --docker-image alpine:latest --docker-volumes "/var/run/docker.sock:/var/run/docker.sock"
 ```
 Определены стадии *build*, *test*, *review* и соответсвующие задачи для них. Теперь при коммите в репозиторий автоматический запускается конвейер для сборки, тестирования и установки сервиса.
@@ -205,3 +206,40 @@ cd ../ansible
 ansible-playbook gitlab-runner_register.yml
 ```
 11. Уведомления о событиях приходят на мой канал в Slack https://devops-team-otus.slack.com/archives/CS7GWPFQD
+</details>
+
+## monitoring-1
+1. Микросервисная приложение запущено вместе с контейнером *prometheus*.
+2. Метрики собираются с каждого сервиса по *http://.../metrics*
+3. Из [docker-compose.yml](docker/docker-compose.yml) убраны директивы *build:*. Сборка сервисов выполняется скриптом:
+```sh
+for i in ui post-py comment; do cd src/$i; bash
+docker_build.sh; cd -; done
+```
+4. Проверена работа *prometheus*. Все сервисы успешно подключены в мониторинг.
+5.  Для мониторинга работы *docker-хоста* используется [node exporter](https://github.com/prometheus/node_exporter).
+6. Для мониторинга работы *mongodb* применен [mongodb_exporter]https://github.com/percona/mongodb_exporter) от percona.
+7. Добавлен миниторинг сервисов *post*, *ui* и *comment* с помощью *blackbox экспортера*. Он реализует мониторинг по принципу черного ящика.
+```
+modules:
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      valid_http_versions: ["HTTP/1.1", "HTTP/2"]
+      valid_status_codes: [200]
+      method: GET
+      preferred_ip_protocol: "ip4"
+      ip_protocol_fallback: false
+
+  icmp_test:
+    prober: icmp
+    timeout: 2s
+    icmp:
+      preferred_ip_protocol: "ip4"
+```
+8. Для сборки и загрузки всех используемых образов написан [Makefile](Makefile).
+```sh
+make prometheus comment ui post # для сборки и загрузки только указанных образов
+make onlypush=1 # для загрузки образов
+```
