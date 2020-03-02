@@ -17,7 +17,7 @@ ADD Gemfile* $APP_HOME/
 RUN bundle install && rm -rf $GEM_HOME/gems/cache/*.gem
 
 FROM alpine:3.10
-
+LABEL imagename="ui" version="4.0"
 ENV BUNDLE_APP_CONFIG="/usr/local/bundle" BUNDLE_BIN="/usr/local/bundle/bin" \
     PATH="/usr/local/bundle/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin" \
     BUNDLE_PATH="/usr/local/bundle" GEM_HOME="/usr/local/bundle" APP_HOME="/app"
