@@ -293,8 +293,8 @@ groups:
         - 'docker_host:9323'
 ...
 ```
-Дашбоард для отображения этих метрик [DockerEngineExperemental.json](monitoring/graphana/dashboards/DockerEngineExperemental.json)
-![Docker Experemental Dashboard](monitoring/graphana/dashboards/DockerEngineExperemental.png)
+Дашбоард для отображения этих метрик [DockerEngineExperemental.json](monitoring/grafana/dashboards/DockerEngineExperemental.json)
+![Docker Experemental Dashboard](monitoring/grafana/dashboards/DockerEngineExperemental.png)
 12. Создан сервис *telegraf* - агент для сбора метрик от InfluxDB. Мониторинг docker хоста настроен в конфигурационном файле:
 ```ini
 [[inputs.docker]]
@@ -310,8 +310,8 @@ groups:
     docker_label_include = []
     docker_label_exclude = []
 ```
-Дашбоард для отображения собранных меток [TelegrafMetrics.json](monitoring/graphana/dashboards/TelegrafMetrics.json)
-![Telegraf Metrics](monitoring/graphana/dashboards/TelegrafMetrics.png)
+Дашбоард для отображения собранных меток [TelegrafMetrics.json](monitoring/grafana/dashboards/TelegrafMetrics.json)
+![Telegraf Metrics](monitoring/grafana/dashboards/TelegrafMetrics.png)
 13. Добавлено еще одно оповещение на превышение времени ответа сервиса *ui*
 Описание условия в *alerts.yml*:
 ```yaml
