@@ -209,6 +209,7 @@ ansible-playbook gitlab-runner_register.yml
 </details>
 
 ## monitoring-1
+<details>
 1. Микросервисная приложение запущено вместе с контейнером *prometheus*.
 2. Метрики собираются с каждого сервиса по *http://.../metrics*
 3. Из [docker-compose.yml](docker/docker-compose.yml) убраны директивы *build:*. Сборка сервисов выполняется скриптом:
@@ -250,3 +251,182 @@ make onlypush=1 # для загрузки образов
 - https://hub.docker.com/repository/docker/is217175/prometheus
 - https://hub.docker.com/repository/docker/is217175/mongodb_exporter
 - https://hub.docker.com/repository/docker/is217175/blackbox_exporter
+</details>
+
+## monitoring-2
+1. Из файла *docker-compose.yml* вынесены сервисы мониторинга в файл *docker-compose-monitoring.yml*
+2. Создан сервис *cAdvisor* для мониторинга *docker контейнеров*.
+3. Создан сервис *grafana* для визуализации собираемых *prometehus* метрик и параметров.
+4. Источником данных для *grafana* является *prometehus*. Добавлен из библиотеки дашбоард для визуализации метрик *хоста docker* - [DockerMonitoring.json](monitoring/grafana/dashboards/DockerMonitoring.json).
+5. Добавлен дашбоард *UI_Service_Monitoring* для мониторинга количество ошибок 4ХХ и 5ХХ *ui_request_count*, количество http запросов к серивису *ui* - *ui_request_response_time_bucket* и 95-й процентиль времени ответа сервиса *ui* - *ui_request_response_time_bucket*. Дашбоард выгружен в файл [UI_Service_Monitoring.json](monitoring/grafana/dashboards/UI_Service_Monitoring.json).
+6. В *prometehus* добавлен сбор метрик с сервиса *post*.
+7. Добавлен дашбоард *Business_Logic_Monitoring* для мониторинга количества постов с сервиса *post* и количества комментариев с севриса *comment*. Дашбопрд выгружен в файл [Business_Logic_Monitoring.json](monitoring/grafana/dashboards/Business_Logic_Monitoring.json).
+8. Создан сервис *alertmanager* для наблюдения за метриками. Настроена отправка уведомлений о событиях в *slack* (https://devops-team-otus.slack.com/archives/CS7GWPFQD).
+9. В конфигурацию *prometeheus* добавлено правило оповещения в файл [alerts.yml](monitoring/prometeheus/alerts.yml):
+```yaml
+groups:
+  - name: alert.rules
+    rules:
+    - alert: InstanceDown
+      expr: up == 0
+      for: 1m
+      labels:
+        severity: page
+      annotations:
+        description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute'
+        summary: 'Instance {{ $labels.instance }} down'
+```
+10. Созданный ранее *Makefile* собирает все используемые docker-образы и загружает в репозиторий - https://hub.docker.com/u/is217175.
+11. *Демон docker* в экспериментальном режиме может отдавать метрики для мониторинга своей работы. Для включения этой возможности необходимо в файл `/etc/docker/daemon.json` внести настройки:
+```json
+{
+  "metrics-addr" : "127.0.0.1:9323",
+  "experimental" : true
+}
+```
+И добавить сбор этих метрик в *prometehus*:
+```yaml
+...
+  - job_name: 'docker_experemental'
+    static_configs:
+      - targets:
+        - 'docker_host:9323'
+...
+```
+Дашбоард для отображения этих метрик [DockerEngineExperemental.json](monitoring/graphana/dashboards/DockerEngineExperemental.json)
+![Docker Experemental Dashboard](monitoring/graphana/dashboards/DockerEngineExperemental.png)
+12. Создан сервис *telegraf* - агент для сбора метрик от InfluxDB. Мониторинг docker хоста настроен в конфигурационном файле:
+```ini
+[[inputs.docker]]
+    endpoint = "unix:///var/run/docker.sock"
+    gather_services = false
+    container_names = []
+    source_tag = false
+    container_name_include = []
+    container_name_exclude = []
+    timeout = "5s"
+    perdevice = true
+    total = false
+    docker_label_include = []
+    docker_label_exclude = []
+```
+Дашбоард для отображения собранных меток [TelegrafMetrics.json](monitoring/graphana/dashboards/TelegrafMetrics.json)
+![Telegraf Metrics](monitoring/graphana/dashboards/TelegrafMetrics.png)
+13. Добавлено еще одно оповещение на превышение времени ответа сервиса *ui*
+Описание условия в *alerts.yml*:
+```yaml
+- alert: HighResponce
+  expr: histogram_quantile(0.95, sum(rate(ui_request_response_time_bucket[1m])) by (le)) > 0.1
+  for: 1m
+  labels:
+    severity: page
+  annotations:
+    description: 'UI high latency'
+    summary: 'Too high response time for UI service, more than 0.1 s.'
+```
+При этом *alertmanager* настроен дополнительно отправлять уведомлени на email:
+```yaml
+global:
+  ...
+  smtp_from: alert@gmail.com
+  smtp_smarthost: smtp.gmail.com:587
+  smtp_auth_username: alert@gmail.com
+  smtp_auth_password: password
+
+route:
+  receiver: 'slack-notifications'
+
+  routes:
+    - match:
+        severity: page
+      continue: true
+      receiver: slack-notifications
+
+    - match:
+        severity: page
+      receiver: email-notification
+
+receivers:
+  ...
+  - name: 'email-notification'
+    email_configs:
+      - to: 'my@example.com'
+```
+14. В сервис grafana были добавлены изменения, позволяющие автоматически добавлять источники данных и дашбоарды.
+В Dockerfile добавлены строки:
+```
+COPY datasource.yml  /etc/grafana/provisioning/datasources/
+COPY dashboards.yml /etc/grafana/provisioning/dashboards/
+COPY dashboards/*.json /var/lib/grafana/dashboards/
+```
+Настройка источника данных *datasource.yml*:
+```yaml
+apiVersion: 1
+
+datasources:
+- name: Prometheus
+  type: prometheus
+  access: proxy
+  orgId: 1
+  url: http://prometheus:9090
+  isDefault: true
+  version: 1
+  editable: true
+```
+Натсройка дашбоардов dashboards.yml:
+```yaml
+apiVersion: 1
+
+providers:
+- name: 'my'
+  orgId: 1
+  folder: ''
+  type: file
+  disableDeletion: false
+  editable: true
+  updateIntervalSeconds: 10
+  allowUiUpdates: true
+  options:
+    path: /var/lib/grafana/dashboards
+
+```
+*Grafana* будет сканировать директорию `/var/lib/grafana/dashboards` для поиска дашбоардов.
+
+15. Для сбора с *Google Stackdriver* добавлен сервис *stackdriver* в компоуз файл:
+```yaml
+stackdriver:
+  image: frodenas/stackdriver-exporter:master
+  environment:
+    - GOOGLE_APPLICATION_CREDENTIALS=/data/google_sa.json
+  command:
+    - '--google.project-id=docker-123456'
+    - '--monitoring.metrics-type-prefixes=compute.googleapis.com/firewall,compute.googleapis.com/instance'
+    - '--monitoring.metrics-interval=5m'
+  volumes:
+    - stackdriver_data:/data
+  ports:
+    - 9255:9255
+  networks:
+    - prom_net
+```
+Удалось собрать собрать метрики указанные в https://cloud.google.com/monitoring/api/metrics_gcp#gcp-compute
+16. В приложение были добавлены метрики:
+- в сервис *comment* добавлены метрики *comment_body_length* (длина комментария, гистограмма), *comment_db_operation_seconds* (время работы с базой данных, гистограмма, с разделением по меткам для разных операций find, insert)
+- в сервис *post* метрика *post_read_db_seconds* немного модифицирована для сбора данных по меткам, в зависимости от операций: find, insert, update.
+- в сервис *ui* добавлен счетчик перехода по внешним ссылкам *ui_follow_link*. Для этого немного модифицированы шаблоны и добавлен метод для обработки такого запроса.
+17. Создан сервис *trackster* для проксирования запросов от *grafana* к *prometeheus*.
+```yaml
+  trickster:
+    image: tricksterio/trickster:1.0.1
+    environment:
+      - TRK_ORIGIN=http://prometheus:9090
+      - TRK_ORIGIN_TYPE=prometheus
+      - TRK_LOG_LEVEL=INFO
+      - TRK_PROXY_PORT=9090
+      - TRK_METRICS_PORT=8082
+    ports:
+      - 9091:9090
+      - 8082:8082
+    networks:
+      - prom_net
+```

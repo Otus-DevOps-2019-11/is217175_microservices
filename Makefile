@@ -12,7 +12,7 @@ ifndef pushonly
 	@echo "\n\e[92;1mBuilding \e[4m$@\e[24m image\e[0m\n"
 	@docker build -t $(USERNAME)/$@:$(VERSION) $(dir $(DOCKERFILE))
 endif
-ifndef donotpush
+ifndef dontpush
 	@echo "\n\e[92;1mPushing \e[4m$@\e[24m to hub.dcoker.com.\e[0m\n"
 	@docker push $(USERNAME)/$@:$(VERSION)
 endif
