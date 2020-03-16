@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 services:
   post_db:
     image: mongo:3.2
@@ -29,59 +29,8 @@ services:
       - back_net
       - front_net
 
-  prometheus:
-    image: ${USERNAME}/prometheus:2.1.0
-    ports:
-      - '9090:9090'
-    volumes:
-      - prometheus_data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--storage.tsdb.retention=1d'
-    networks:
-      - back_net
-      - front_net
-      - prom_net
-
-  node-exporter:
-    image: prom/node-exporter:v0.15.2
-    user: root
-    volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    command:
-      - '--path.procfs=/host/proc'
-      - '--path.sysfs=/host/sys'
-      - '--collector.filesystem.ignored-mount-points="^/(sys|proc|dev|host|etc)($$|/)"'
-    networks:
-      - prom_net
-
-  mongodb-exporter:
-    image: ${USERNAME}/mongodb_exporter:0.10.0
-    environment:
-      - MONGODB_URI=mongodb://post_db:27017
-    ports:
-      - '9216:9216'
-    networks:
-      - prom_net
-      - back_net
-
-  blackbox-exporter:
-    image: ${USERNAME}/blackbox_exporter:0.16.0
-    ports:
-      - '9115:9115'
-    cap_add:
-      - CAP_NET_RAW
-    networks:
-      - back_net
-      - front_net
-      - prom_net
-
 volumes:
   post_db:
-  prometheus_data:
 
 networks:
   back_net:
@@ -93,8 +42,3 @@ networks:
     ipam:
       config:
         - subnet: 10.0.1.0/24
-
-  prom_net:
-    ipam:
-      config:
-        - subnet: 10.0.3.0/24

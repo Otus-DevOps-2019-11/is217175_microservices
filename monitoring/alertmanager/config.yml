@@ -1,0 +1,28 @@
+global:
+  slack_api_url: 'https://hooks.slack.com/services/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'
+  smtp_from: alert@gmail.com
+  smtp_smarthost: smtp.gmail.com:587
+  smtp_auth_username: alert@gmail.com
+  smtp_auth_password: password
+
+route:
+  receiver: 'slack-notifications'
+
+  routes:
+    - match:
+        severity: page
+      continue: true
+      receiver: slack-notifications
+
+    - match:
+        severity: page
+      receiver: email-notification
+
+receivers:
+  - name: 'slack-notifications'
+    slack_configs:
+    - channel: '#dmitrii_isupov'
+
+  - name: 'email-notification'
+    email_configs:
+      - to: 'my@example.com'

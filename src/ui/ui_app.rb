@@ -80,9 +80,15 @@ ui_health_comment_gauge = Prometheus::Client::Gauge.new(
   :ui_health_comment_availability,
   'Check if Comment service is available to UI'
 )
+
+ui_follow_link_counter = Prometheus::Client::Counter.new(
+  :ui_follow_link,
+  'The number of clicks on the link'
+)
 prometheus.register(ui_health_gauge)
 prometheus.register(ui_health_post_gauge)
 prometheus.register(ui_health_comment_gauge)
+prometheus.register(ui_follow_link_counter)
 
 # Schedule health check function
 scheduler = Rufus::Scheduler.new
@@ -197,6 +203,19 @@ get '/post/:id' do
   @flashes = session[:flashes]
   session[:flashes] = nil
   haml :show
+end
+
+# redirect to external link
+get '/post/go/:id' do
+  begin
+    @post = http_request('get', "#{POST_URL}/post/#{params[:id]}")
+  rescue StandardError => e
+    log_event('error', 'link_post',
+              "Counldn't follow the post's link. Reason: #{e.message}", params)
+    halt 404, 'Not found'
+  end
+  ui_follow_link_counter.increment({post_id: params[:id]})
+  redirect(@post['link'])
 end
 
 # talk to Comment service in order to comment on a post

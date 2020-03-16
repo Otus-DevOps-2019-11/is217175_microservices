@@ -1,0 +1,3413 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Prometheus/victoriametrics dashboards for telegraf metrics",
+  "editable": true,
+  "gnetId": 11050,
+  "graphTooltip": 1,
+  "id": 7,
+  "iteration": 1583686783779,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 65058,
+      "panels": [],
+      "title": "SUMMARY",
+      "type": "row"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": true,
+      "colorValue": false,
+      "colors": [
+        "rgba(40, 147, 237, 0.89)",
+        "rgba(40, 147, 237, 0.89)",
+        "rgba(40, 147, 237, 0.89)"
+      ],
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "format": "s",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "height": "150px",
+      "id": 54758,
+      "interval": "$inter",
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "maxPerRow": 3,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "UPTIME",
+      "prefixFontSize": "100%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeat": "server",
+      "scopedVars": {
+        "server": {
+          "selected": true,
+          "text": "d1da6a5008f1",
+          "value": "d1da6a5008f1"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "col": "value",
+          "dsType": "prometheus",
+          "expr": "system_uptime{host =~ \"$server$\"}",
+          "groupBy": [],
+          "measurement": "system",
+          "policy": "default",
+          "query": "SELECT last(\"uptime\") AS \"value\" FROM \"system\" WHERE \"host\" =~ /$server$/ AND $timeFilter GROUP BY time($interval)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "uptime"
+                ],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": "",
+      "title": "$server",
+      "type": "singlestat",
+      "valueFontSize": "100%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": true,
+      "colorValue": false,
+      "colors": [
+        "rgba(255, 0, 0, 0.67)",
+        "rgba(237, 129, 40, 0.89)",
+        "rgba(50, 172, 45, 0.97)"
+      ],
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "format": "percent",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 13
+      },
+      "id": 2165,
+      "interval": "$inter",
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "maxPerRow": 3,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "Memory Available:",
+      "prefixFontSize": "80%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "repeat": "server",
+      "scopedVars": {
+        "server": {
+          "selected": true,
+          "text": "d1da6a5008f1",
+          "value": "d1da6a5008f1"
+        }
+      },
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": true
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "col": "value",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,mem_available_percent{host =~ \"$server$\"})",
+          "groupBy": [],
+          "measurement": "mem",
+          "policy": "default",
+          "query": "SELECT mean(\"available_percent\") AS \"value\" FROM \"mem\" WHERE \"host\" =~ /$server$/ AND $timeFilter GROUP BY time($interval)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "available_percent"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": "80,0",
+      "title": "$server",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 65060,
+      "panels": [],
+      "title": "SYSTEM",
+      "type": "row"
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "fill": 0,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 26
+      },
+      "hiddenSeries": false,
+      "id": 54694,
+      "interval": "$inter",
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $col",
+          "col": "load1",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,system_load1{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: load1",
+          "measurement": "system",
+          "policy": "default",
+          "query": "select mean(load1) as load1 from \"system\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), * ORDER BY asc",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "load1"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "load5",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,system_load5{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: load5",
+          "measurement": "system",
+          "policy": "default",
+          "query": "select mean(load5) as load5 from \"system\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), * ORDER BY asc",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "load5"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "load15",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,system_load15{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: load15",
+          "measurement": "system",
+          "policy": "default",
+          "query": "select mean(load15) as load15 from \"system\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), * ORDER BY asc",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "load15"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Load",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 26
+      },
+      "hiddenSeries": false,
+      "id": 12054,
+      "interval": "$inter",
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/mem_total/",
+          "color": "#BF1B00",
+          "fill": 0,
+          "linewidth": 2
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $col",
+          "col": "total",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,mem_total{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: total",
+          "measurement": "mem",
+          "policy": "default",
+          "query": "select mean(total) as total from \"mem\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "used",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,mem_used{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: used",
+          "measurement": "mem",
+          "policy": "default",
+          "query": "select mean(used) as used from \"mem\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "used"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "cached",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,mem_cached{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: cached",
+          "measurement": "mem",
+          "policy": "default",
+          "query": "select mean(cached) as cached from \"mem\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "cached"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "free",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,mem_free{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: free",
+          "measurement": "mem",
+          "policy": "default",
+          "query": "select mean(free) as free from \"mem\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "free"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "buffered",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,mem_buffered{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: buffered",
+          "measurement": "mem",
+          "policy": "default",
+          "query": "select mean(buffered) as buffered from \"mem\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "buffered"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Memory usage",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 35
+      },
+      "hiddenSeries": false,
+      "id": 28239,
+      "interval": "$inter",
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $col",
+          "col": "idle",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_idle{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: idle",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_idle) as idle from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_idle"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "user",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_user{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: user",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_user) as user from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_user"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "system",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_system{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: system",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_system) as system from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_system"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "softirq",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_softirq{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: softirq",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_softirq) as softirq from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "E",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_softirq"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "steal",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_steal{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: steal",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_steal) as steal from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "F",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_steal"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "nice",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_nice{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: nice",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_nice) as nice from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "G",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_nice"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "irq",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_irq{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: irq",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_irq) as irq from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "H",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_irq"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "iowait",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_iowait{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: iowait",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_iowait) as iowait from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "I",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_iowait"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "guest",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_guest{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: guest",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_guest) as guest from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "J",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_guest"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "guest_nice",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,cpu_usage_guest_nice{host =~ \"$server$\",cpu = 'cpu-total'}) by (host)",
+          "function": "mean",
+          "g": true,
+          "groupBy": " by (host)",
+          "hide": false,
+          "legendFormat": "{{host}}: guest_nice",
+          "measurement": "cpu",
+          "policy": "default",
+          "query": "select mean(usage_guest_nice) as guest_nice from \"cpu\" WHERE \"host\" =~ /$server$/ and  cpu = 'cpu-total' AND $timeFilter GROUP BY time($interval), *",
+          "rawQuery": true,
+          "refId": "K",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_guest_nice"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",cpu = 'cpu-total'}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "CPU",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "logBase": 1,
+          "max": 100,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 35
+      },
+      "hiddenSeries": false,
+      "id": 33458,
+      "interval": "$inter",
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/used/",
+          "color": "#BF1B00",
+          "zindex": 3
+        },
+        {
+          "alias": "/free/",
+          "bars": false,
+          "fill": 0,
+          "lines": true,
+          "linewidth": 1
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "$tag_host: $tag_path : $col",
+          "col": "free",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,disk_inodes_free{host =~ \"$server$\",path=\"/host/rootfs\"}) by (host,path)",
+          "function": "mean",
+          "groupBy": " by (host,path)",
+          "legendFormat": "{{host}}: {{path}} : free",
+          "measurement": "disk",
+          "policy": "default",
+          "query": "select mean(inodes_free) as free from \"disk\" WHERE \"host\" =~ /$server$/ AND \"path\" = '/' AND $timeFilter GROUP BY time($interval), \"host\", \"path\"",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "inodes_free"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",path = '/'}"
+        },
+        {
+          "alias": "$tag_host: $tag_path : $col",
+          "col": "used",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,disk_inodes_used{host =~ \"$server$\",path=\"/host/rootfs\"}) by (host,path)",
+          "function": "mean",
+          "groupBy": " by (host,path)",
+          "legendFormat": "{{host}}: {{path}} : used",
+          "measurement": "disk",
+          "policy": "default",
+          "query": "select mean(inodes_used) as used from \"disk\" WHERE \"host\" =~ /$server$/ AND \"path\" = '/' AND $timeFilter GROUP BY time($interval), \"host\", \"path\"",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "inodes_used"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",path = '/'}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk inodes",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 44
+      },
+      "hiddenSeries": false,
+      "id": 52240,
+      "interval": "$inter",
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/total/",
+          "color": "#BF1B00",
+          "fill": 0,
+          "linewidth": 2,
+          "zindex": 3
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "$tag_host: $tag_path : $col",
+          "col": "total",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,disk_total{host =~ \"$server$\",path=\"/host/rootfs\"}) by (host,path)",
+          "function": "mean",
+          "groupBy": " by (host,path)",
+          "instant": false,
+          "legendFormat": "{{host}}: {{path}} : total",
+          "measurement": "disk",
+          "policy": "default",
+          "query": "select mean(total) AS total from \"disk\" WHERE \"host\" =~ /$server$/ AND \"path\" = '/' AND $timeFilter GROUP BY time($interval), \"host\", \"path\"",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",path = '/'}"
+        },
+        {
+          "alias": "$tag_host: $tag_path : $col",
+          "col": "used",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,disk_used{host =~ \"$server$\",path=\"/host/rootfs\"}) by (host,path)",
+          "function": "mean",
+          "groupBy": " by (host,path)",
+          "instant": false,
+          "legendFormat": "{{host}}: {{path}} : used",
+          "measurement": "disk",
+          "policy": "default",
+          "query": "select mean(used) as used from \"disk\" WHERE \"host\" =~ /$server$/ AND \"path\" = '/' AND $timeFilter GROUP BY time($interval), \"host\", \"path\"",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "used"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\",path = '/'}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Disk usage",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 44
+      },
+      "hiddenSeries": false,
+      "id": 61850,
+      "interval": "$inter",
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/total/",
+          "fill": 0
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": true,
+      "targets": [
+        {
+          "alias": "$tag_host: $col",
+          "col": "free",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,swap_free{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: free",
+          "measurement": "swap",
+          "policy": "default",
+          "query": "select mean(free) as free from \"swap\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "free"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "used",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,swap_used{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: used",
+          "measurement": "swap",
+          "policy": "default",
+          "query": "select mean(used) as used from \"swap\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "C",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "used"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "total",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,swap_total{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: total",
+          "measurement": "swap",
+          "policy": "default",
+          "query": "select mean(total) as total from \"swap\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "total"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Swap usage (bytes)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 53
+      },
+      "hiddenSeries": false,
+      "id": 26024,
+      "interval": "$inter",
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/in/",
+          "transform": "negative-Y"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $col",
+          "col": "in",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,swap_in{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: in",
+          "measurement": "swap",
+          "policy": "default",
+          "query": "select mean(in) as in from \"swap\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "in"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $col",
+          "col": "out",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,swap_out{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: out",
+          "measurement": "swap",
+          "policy": "default",
+          "query": "select mean(out) as out from \"swap\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "out"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Swap I/O bytes",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "Prometheus",
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 53
+      },
+      "hiddenSeries": false,
+      "id": 16118,
+      "interval": "$inter",
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $col",
+          "col": "used",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,swap_used_percent{host =~ \"$server$\"}) by (host)",
+          "function": "mean",
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}: used",
+          "measurement": "swap",
+          "policy": "default",
+          "query": "SELECT mean(used_percent) as used FROM \"swap\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval), host ORDER BY asc",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "used_percent"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Swap usage (percent)",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "cumulative"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "logBase": 1,
+          "max": 100,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 62
+      },
+      "id": 65075,
+      "panels": [],
+      "title": "DOCKER",
+      "type": "row"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 0,
+        "y": 63
+      },
+      "id": 65035,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "alias": "$tag_host",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,docker_n_cpus{host =~ \"$server$\"}) by (host)",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}",
+          "measurement": "docker",
+          "policy": "default",
+          "query": "SELECT mean(\"n_cpus\") FROM \"docker\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "n_cpus"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": "",
+      "title": "Total CPUs per Host",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "bytes",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 4,
+        "y": 63
+      },
+      "id": 65036,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "alias": "$tag_host",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,docker_memory_total{host =~ \"$server$\"}) by (host)",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}",
+          "measurement": "docker",
+          "policy": "default",
+          "query": "SELECT mean(\"memory_total\") FROM \"docker\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "memory_total"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": "",
+      "title": "Total RAM per host",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "current"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 8,
+        "y": 63
+      },
+      "id": 65032,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "pluginVersion": "6.6.2",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "alias": "$tag_host",
+          "dsType": "prometheus",
+          "expr": "docker_n_containers{host =~ \"$server$\"}",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}",
+          "measurement": "docker",
+          "policy": "default",
+          "query": "SELECT last(\"n_containers\") FROM \"docker\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "n_containers"
+                ],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": "",
+      "title": "Containers by Host",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 12,
+        "y": 63
+      },
+      "id": 65034,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "pluginVersion": "6.6.2",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "alias": "$tag_host",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,docker_n_used_file_descriptors{host =~ \"$server$\"}) by (host)",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}",
+          "measurement": "docker",
+          "policy": "default",
+          "query": "SELECT mean(\"n_used_file_descriptors\") FROM \"docker\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "n_used_file_descriptors"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": "",
+      "title": "File Descriptors by host",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 16,
+        "y": 63
+      },
+      "id": 65037,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "alias": "$tag_host",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,docker_n_images{host =~ \"$server$\"}) by (host)",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}",
+          "measurement": "docker",
+          "policy": "default",
+          "query": "SELECT mean(\"n_images\") FROM \"docker\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "n_images"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": "",
+      "title": "Images per host",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "cacheTimeout": null,
+      "colorBackground": false,
+      "colorValue": false,
+      "colors": [
+        "#299c46",
+        "rgba(237, 129, 40, 0.89)",
+        "#d44a3a"
+      ],
+      "datasource": null,
+      "format": "none",
+      "gauge": {
+        "maxValue": 100,
+        "minValue": 0,
+        "show": false,
+        "thresholdLabels": false,
+        "thresholdMarkers": true
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 4,
+        "x": 20,
+        "y": 63
+      },
+      "id": 65033,
+      "interval": null,
+      "links": [],
+      "mappingType": 1,
+      "mappingTypes": [
+        {
+          "name": "value to text",
+          "value": 1
+        },
+        {
+          "name": "range to text",
+          "value": 2
+        }
+      ],
+      "maxDataPoints": 100,
+      "nullPointMode": "connected",
+      "nullText": null,
+      "options": {},
+      "pluginVersion": "6.6.2",
+      "postfix": "",
+      "postfixFontSize": "50%",
+      "prefix": "",
+      "prefixFontSize": "50%",
+      "rangeMaps": [
+        {
+          "from": "null",
+          "text": "N/A",
+          "to": "null"
+        }
+      ],
+      "sparkline": {
+        "fillColor": "rgba(31, 118, 189, 0.18)",
+        "full": false,
+        "lineColor": "rgb(31, 120, 193)",
+        "show": false,
+        "ymax": null,
+        "ymin": null
+      },
+      "tableColumn": "",
+      "targets": [
+        {
+          "alias": "$tag_host",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,docker_n_goroutines{host =~ \"$server$\"}) by (host)",
+          "g": true,
+          "groupBy": " by (host)",
+          "legendFormat": "{{host}}",
+          "measurement": "docker",
+          "policy": "default",
+          "query": "SELECT mean(\"n_goroutines\") FROM \"docker\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "n_goroutines"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": "",
+      "title": "GO Routines by host",
+      "type": "singlestat",
+      "valueFontSize": "80%",
+      "valueMaps": [
+        {
+          "op": "=",
+          "text": "N/A",
+          "value": "null"
+        }
+      ],
+      "valueName": "avg"
+    },
+    {
+      "aliasColors": [],
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 70
+      },
+      "height": "300",
+      "hiddenSeries": false,
+      "id": 65038,
+      "interval": "$inter",
+      "isNew": true,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $tag_container_image",
+          "col": "usage",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,docker_container_cpu_usage_percent{host =~ \"$server$\"}) by (host,container_image)",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}",
+          "measurement": "docker_container_cpu",
+          "policy": "default",
+          "query": "SELECT mean(\"usage_percent\") as \"usage\" FROM \"docker_container_cpu\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_percent"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "CPU usage by container",
+      "tooltip": {
+        "msResolution": true,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": true,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "editable": true,
+      "error": false,
+      "fill": 1,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 78
+      },
+      "height": "300",
+      "hiddenSeries": false,
+      "id": 65039,
+      "interval": "$inter",
+      "isNew": true,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": false,
+      "linewidth": 2,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $tag_container_image",
+          "col": "usage",
+          "dsType": "prometheus",
+          "expr": "quantile(0.5,docker_container_mem_usage_percent{host =~ \"$server$\"}) by (host,container_image)",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}",
+          "measurement": "docker_container_mem",
+          "policy": "default",
+          "query": "SELECT mean(\"usage_percent\") as \"usage\" FROM \"docker_container_mem\" WHERE host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "usage_percent"
+                ],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "RAM usage by container",
+      "tooltip": {
+        "msResolution": true,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "percent",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": 0,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "editable": true,
+      "error": false,
+      "fill": 0,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 86
+      },
+      "height": "300",
+      "hiddenSeries": false,
+      "id": 65040,
+      "interval": "$inter",
+      "isNew": true,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/rx/",
+          "stack": "A",
+          "transform": "negative-Y"
+        },
+        {
+          "alias": "/tx/",
+          "stack": "B"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $tag_container_image: $col",
+          "col": "rx",
+          "dsType": "prometheus",
+          "expr": "rate(docker_container_net_rx_bytes{host =~ \"$server$\"}[$__interval])",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}: rx",
+          "measurement": "docker_container_net",
+          "policy": "default",
+          "query": "SELECT non_negative_derivative(mean(\"rx_bytes\"),1s)/8 as \"rx\" FROM \"docker_container_net\" WHERE  host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_bytes"
+                ],
+                "type": "non_negative_derivative(mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $tag_container_image: $col",
+          "col": "tx",
+          "dsType": "prometheus",
+          "expr": "rate(docker_container_net_tx_bytes{host =~ \"$server$\"}[$__interval])",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}: tx",
+          "measurement": "docker_container_net",
+          "policy": "default",
+          "query": "SELECT non_negative_derivative(mean(\"tx_bytes\"),1s)/8 as \"tx\" FROM \"docker_container_net\" WHERE  host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "tx_bytes"
+                ],
+                "type": "non_negative_derivative(mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Network usage by container / second",
+      "tooltip": {
+        "msResolution": true,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "bytes",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "editable": true,
+      "error": false,
+      "fill": 0,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 94
+      },
+      "height": "300",
+      "hiddenSeries": false,
+      "id": 65041,
+      "interval": "$inter",
+      "isNew": true,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/rx/",
+          "stack": "A",
+          "transform": "negative-Y"
+        },
+        {
+          "alias": "/tx/",
+          "stack": "B"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $tag_container_image: $col",
+          "col": "rx",
+          "dsType": "prometheus",
+          "expr": "rate(docker_container_net_rx_packets{host =~ \"$server$\"}[$__interval])",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}: rx",
+          "measurement": "docker_container_net",
+          "policy": "default",
+          "query": "SELECT non_negative_derivative(mean(\"rx_packets\"),1s) as \"rx\" FROM \"docker_container_net\" WHERE  host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_packets"
+                ],
+                "type": "non_negative_derivative(mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $tag_container_image: $col",
+          "col": "tx",
+          "dsType": "prometheus",
+          "expr": "rate(docker_container_net_tx_packets{host =~ \"$server$\"}[$__interval])",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}: tx",
+          "measurement": "docker_container_net",
+          "policy": "default",
+          "query": "SELECT non_negative_derivative(mean(\"tx_packets\"),1s) as \"tx\" FROM \"docker_container_net\" WHERE  host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "tx_packets"
+                ],
+                "type": "non_negative_derivative(mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Network packets by container / second",
+      "tooltip": {
+        "msResolution": true,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "editable": true,
+      "error": false,
+      "fill": 0,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 102
+      },
+      "height": "300",
+      "hiddenSeries": false,
+      "id": 65042,
+      "interval": "$inter",
+      "isNew": true,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/rx/",
+          "stack": "A",
+          "transform": "negative-Y"
+        },
+        {
+          "alias": "/tx/",
+          "stack": "B"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $tag_container_image: $col",
+          "col": "rx",
+          "dsType": "prometheus",
+          "expr": "rate(docker_container_net_rx_dropped{host =~ \"$server$\"}[$__interval])",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}: rx",
+          "measurement": "docker_container_net",
+          "policy": "default",
+          "query": "SELECT non_negative_derivative(mean(\"rx_dropped\"),1s) as \"rx\" FROM \"docker_container_net\" WHERE  host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_dropped"
+                ],
+                "type": "non_negative_derivative(mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $tag_container_image: $col",
+          "col": "tx",
+          "dsType": "prometheus",
+          "expr": "rate(docker_container_net_tx_dropped{host =~ \"$server$\"}[$__interval])",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}: tx",
+          "measurement": "docker_container_net",
+          "policy": "default",
+          "query": "SELECT non_negative_derivative(mean(\"tx_dropped\"),1s) as \"tx\" FROM \"docker_container_net\" WHERE  host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "tx_dropped"
+                ],
+                "type": "non_negative_derivative(mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Network dropped by container / second",
+      "tooltip": {
+        "msResolution": true,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": [],
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": null,
+      "editable": true,
+      "error": false,
+      "fill": 0,
+      "fillGradient": 0,
+      "grid": {},
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 110
+      },
+      "height": "300",
+      "hiddenSeries": false,
+      "id": 65043,
+      "interval": "$inter",
+      "isNew": true,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "max": true,
+        "min": true,
+        "rightSide": true,
+        "show": true,
+        "sort": "current",
+        "sortDesc": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "links": [],
+      "nullPointMode": "connected",
+      "options": {
+        "dataLinks": []
+      },
+      "percentage": false,
+      "pointradius": 5,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [
+        {
+          "alias": "/rx/",
+          "stack": "A",
+          "transform": "negative-Y"
+        },
+        {
+          "alias": "/tx/",
+          "stack": "B"
+        }
+      ],
+      "spaceLength": 10,
+      "stack": true,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$tag_host: $tag_container_image: $col",
+          "col": "rx",
+          "dsType": "prometheus",
+          "expr": "rate(docker_container_net_rx_errors{host =~ \"$server$\"}[$__interval])",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}: rx",
+          "measurement": "docker_container_net",
+          "policy": "default",
+          "query": "SELECT non_negative_derivative(mean(\"rx_errors\"),1s) as \"rx\" FROM \"docker_container_net\" WHERE  host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "B",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "rx_errors"
+                ],
+                "type": "non_negative_derivative(mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        },
+        {
+          "alias": "$tag_host: $tag_container_image: $col",
+          "col": "tx",
+          "dsType": "prometheus",
+          "expr": "rate(ocker_container_net_tx_errors{host =~ \"$server$\"}[$__interval])",
+          "g": true,
+          "groupBy": " by (host,container_image)",
+          "legendFormat": "{{host}}: {{container_image}}: tx",
+          "measurement": "docker_container_net",
+          "policy": "default",
+          "query": "SELECT non_negative_derivative(mean(\"tx_errors\"),1s) as \"tx\" FROM \"docker_container_net\" WHERE  host =~ /$server$/ AND $timeFilter GROUP BY time($interval),* fill(null)",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "tx_errors"
+                ],
+                "type": "non_negative_derivative(mean"
+              }
+            ]
+          ],
+          "tags": "{host =~ \"$server$\"}"
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Network errors by container / second",
+      "tooltip": {
+        "msResolution": true,
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 22,
+  "style": "dark",
+  "tags": [
+    "prometheus",
+    "telegraf",
+    "victoriametrics"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allFormat": "glob",
+        "current": {
+          "selected": true,
+          "text": "Prometheus",
+          "value": "Prometheus"
+        },
+        "datasource": "Prometheus",
+        "hide": 0,
+        "includeAll": false,
+        "label": "",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "text": "d1da6a5008f1",
+          "value": [
+            "d1da6a5008f1"
+          ]
+        },
+        "datasource": "Prometheus",
+        "definition": "",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Server",
+        "multi": true,
+        "name": "server",
+        "options": [],
+        "query": "label_values(host)",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "auto": true,
+        "auto_count": 100,
+        "auto_min": "30s",
+        "current": {
+          "selected": false,
+          "text": "auto",
+          "value": "$__auto_interval_inter"
+        },
+        "datasource": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Interval",
+        "multi": false,
+        "name": "inter",
+        "options": [
+          {
+            "selected": true,
+            "text": "auto",
+            "value": "$__auto_interval_inter"
+          },
+          {
+            "selected": false,
+            "text": "30s",
+            "value": "30s"
+          },
+          {
+            "selected": false,
+            "text": "1m",
+            "value": "1m"
+          },
+          {
+            "selected": false,
+            "text": "2m",
+            "value": "2m"
+          },
+          {
+            "selected": false,
+            "text": "5m",
+            "value": "5m"
+          },
+          {
+            "selected": false,
+            "text": "10m",
+            "value": "10m"
+          },
+          {
+            "selected": false,
+            "text": "30m",
+            "value": "30m"
+          },
+          {
+            "selected": false,
+            "text": "1h",
+            "value": "1h"
+          }
+        ],
+        "query": "30s,1m,2m,5m,10m,30m,1h",
+        "refresh": 2,
+        "skipUrlSync": false,
+        "type": "interval"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m",
+      "15m",
+      "30m",
+      "1h",
+      "2h",
+      "1d"
+    ],
+    "time_options": [
+      "5m",
+      "15m",
+      "1h",
+      "6h",
+      "12h",
+      "24h",
+      "2d",
+      "7d",
+      "30d"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Telegraf metrics",
+  "uid": "ufPfy3_Wz",
+  "version": 4
+}

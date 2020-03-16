@@ -15,7 +15,7 @@ RUN apk --no-cache --update add build-base python3 python3-dev \
     && apk del build-base
 
 FROM alpine:3.8
-LABEL imagename="post" version="3.0"
+LABEL imagename="post" version="3.1"
 WORKDIR /app
 ADD . /app
 ENV VENV_PATH /pyenv

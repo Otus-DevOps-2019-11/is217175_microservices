@@ -84,7 +84,8 @@ def init(app):
     # prometheus metrics
     app.post_read_db_seconds = prometheus_client.Histogram(
         'post_read_db_seconds',
-        'Request DB time'
+        'Request DB time',
+        ['operation']
     )
     app.post_count = prometheus_client.Counter(
         'post_count',
@@ -107,6 +108,7 @@ def metrics():
 # Retrieve information about all posts
 @zipkin_span(service_name='post', span_name='db_find_all_posts')
 def find_posts():
+    start_time = time.time()
     try:
         posts = app.db.find().sort('created_at', -1)
     except Exception as e:
@@ -115,6 +117,9 @@ def find_posts():
                    Reason: {}".format(str(e)))
         abort(500)
     else:
+        stop_time = time.time()  # + 0.3
+        resp_time = stop_time - start_time
+        app.post_read_db_seconds.labels('find').observe(resp_time)
         log_event('info', 'find_all_posts',
                   'Successfully retrieved all posts from the database')
         return dumps(posts)
@@ -144,9 +149,11 @@ def vote():
         log_event('error', 'request_error',
                   "Bad input parameters. Reason: {}".format(str(e)))
         abort(400)
+    start_time = time.time()
     try:
         post = app.db.find_one({'_id': ObjectId(post_id)})
         post['votes'] += int(vote_type)
+        stop_find_time = time.time()
         app.db.update_one({'_id': ObjectId(post_id)},
                           {'$set': {'votes': post['votes']}})
     except Exception as e:
@@ -155,6 +162,11 @@ def vote():
                   {'post_id': post_id, 'vote_type': vote_type})
         abort(500)
     else:
+        stop_time = time.time()
+        resp_find_time = stop_find_time - start_time
+        resp_time = stop_time - stop_find_time
+        app.post_read_db_seconds.labels('find').observe(resp_find_time)
+        app.post_read_db_seconds.labels('update').observe(resp_time)
         log_event('info', 'post_vote', 'Successful vote',
                   {'post_id': post_id, 'vote_type': vote_type})
         return 'OK'
@@ -171,6 +183,7 @@ def add_post():
         log_event('error', 'request_error',
                   "Bad input parameters. Reason: {}".format(str(e)))
         abort(400)
+    start_time = time.time()
     try:
         app.db.insert({'title': title, 'link': link,
                        'created_at': created_at, 'votes': 0})
@@ -180,6 +193,9 @@ def add_post():
                   {'title': title, 'link': link})
         abort(500)
     else:
+        stop_time = time.time()
+        resp_time = stop_time - start_time
+        app.post_read_db_seconds.labels('insert').observe(resp_time)
         log_event('info', 'post_create', 'Successfully created a new post',
                   {'title': title, 'link': link})
         app.post_count.inc()
@@ -200,7 +216,7 @@ def find_post(id):
     else:
         stop_time = time.time()  # + 0.3
         resp_time = stop_time - start_time
-        app.post_read_db_seconds.observe(resp_time)
+        app.post_read_db_seconds.labels('find').observe(resp_time)
         log_event('info', 'post_find',
                   'Successfully found the post information',
                   {'post_id': id})
@@ -220,7 +236,6 @@ def get_post(id):
     ):
         post = find_post(id)
     return post
-
 
 # Health check endpoint
 @app.route('/healthcheck')

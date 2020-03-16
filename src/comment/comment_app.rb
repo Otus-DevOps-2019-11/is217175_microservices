@@ -50,9 +50,23 @@ comment_count = Prometheus::Client::Counter.new(
   :comment_count,
   'A counter of new comments'
 )
+comment_length = Prometheus::Client::Histogram.new(
+  :comment_body_length,
+  'Comments body length',
+  {},
+  [2, 10, 20, 50, 75, 100, 150, 180, 250, 300, 500]
+)
+
+comment_db_operation_seconds = Prometheus::Client::Histogram.new(
+  :comment_db_operation_seconds,
+  'Database operations time'
+)
+
 prometheus.register(comment_health_gauge)
 prometheus.register(comment_health_db_gauge)
 prometheus.register(comment_count)
+prometheus.register(comment_length)
+prometheus.register(comment_db_operation_seconds)
 
 # Schedule health check function
 scheduler = Rufus::Scheduler.new
@@ -79,6 +93,7 @@ end
 # retrieve post's comments
 get '/:id/comments' do
   id = obj_id(params[:id])
+  start_time = Time.now
   begin
     posts = settings.mongo_db.find(post_id: id.to_s).to_a.to_json
   rescue StandardError => e
@@ -87,6 +102,8 @@ get '/:id/comments' do
               params)
     halt 500
   else
+    end_time = Time.now
+    comment_db_operation_seconds.observe({operation: 'find'}, end_time - start_time)
     log_event('info', 'find_post_comments',
               'Successfully retrieved post comments from DB', params)
     posts
@@ -106,19 +123,25 @@ post '/add_comment/?' do
               "Bat input data. Reason: #{e.message}", prms)
   end
   db = settings.mongo_db
+  start_time = Time.now
   begin
     result = db.insert_one post_id: params['post_id'], name: params['name'],
                            email: params['email'], body: params['body'],
                            created_at: params['created_at']
+    end_insert_time = Time.now
     db.find(_id: result.inserted_id).to_a.first.to_json
   rescue StandardError => e
     log_event('error', 'add_comment',
               "Failed to create a comment. Reason: #{e.message}", params)
     halt 500
   else
+    end_time = Time.now
+    comment_db_operation_seconds.observe({operation: 'insert'}, end_insert_time - start_time)
+    comment_db_operation_seconds.observe({operation: 'find'}, end_time - end_insert_time)
     log_event('info', 'add_comment',
               'Successfully created a new comment', params)
     comment_count.increment
+    comment_length.observe({}, params['body'].length)
   end
 end
 

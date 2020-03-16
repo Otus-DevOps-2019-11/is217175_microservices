@@ -24,4 +24,4 @@
                     %em #{Time.at(post['created_at'].to_i).strftime('%d-%m-%Y')}
                     %br #{Time.at(post['created_at'].to_i).strftime('%H:%M')}
         .panel-footer
-          %a{href: "#{post['link']}", class: 'btn btn-link'} Go to the link
+          %a{href: "/post/go/#{post['_id']['$oid']}", class: 'btn btn-link'} Go to the #{post['link']}
