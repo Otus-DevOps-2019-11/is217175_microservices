@@ -164,7 +164,6 @@ def find_post(id):
         stop_time = time.time()  # + 0.3
         resp_time = stop_time - start_time
         app.post_read_db_seconds.observe(resp_time)
-        time.sleep(3)
         log_event('info', 'post_find',
                   'Successfully found the post information',
                   {'post_id': id})
