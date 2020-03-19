@@ -6,7 +6,7 @@ ADD . /app
 ENV VENV_PATH /pyenv
 ENV PATH $VENV_PATH/bin:$PATH
 
-RUN apk --no-cache --update add build-base python3 python3-dev \
+RUN apk --no-cache --update add build-base python3 musl-dev python3-dev \
     && wget https://bootstrap.pypa.io/get-pip.py -O get-pip.py \
     && python3 get-pip.py \
     && pip install virtualenv==16.7.9 \
@@ -15,7 +15,7 @@ RUN apk --no-cache --update add build-base python3 python3-dev \
     && apk del build-base
 
 FROM alpine:3.8
-LABEL imagename="post" version="3.1"
+LABEL imagename="post" version="logging"
 WORKDIR /app
 ADD . /app
 ENV VENV_PATH /pyenv
