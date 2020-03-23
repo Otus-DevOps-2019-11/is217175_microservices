@@ -8,7 +8,6 @@ roleRef:
   kind: ClusterRole
   name: cluster-admin
 subjects:
-  - apiGroup: core
-    kind: ServiceAccount
+  - kind: ServiceAccount
     name: kubernetes-dashboard
     namespace: kude-system
