@@ -1,0 +1,5 @@
+project   = "docker-123456"
+region    = "europe-west4"
+zone      = "europe-west4-a"
+nodes-tag = ["reddit-nodes"]
+port-list = ["30000-32767"]
