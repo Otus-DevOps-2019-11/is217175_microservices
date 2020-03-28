@@ -254,6 +254,7 @@ make onlypush=1 # для загрузки образов
 </details>
 
 ## monitoring-2
+<details>
 1. Из файла *docker-compose.yml* вынесены сервисы мониторинга в файл *docker-compose-monitoring.yml*
 2. Создан сервис *cAdvisor* для мониторинга *docker контейнеров*.
 3. Создан сервис *grafana* для визуализации собираемых *prometehus* метрик и параметров.
@@ -430,3 +431,44 @@ stackdriver:
     networks:
       - prom_net
 ```
+</details>
+
+## Logging-1
+1. Создан [docker-compose-logging.yml](docker/docker-compose-logging.yml) файл. В нем описан запуск стека *EFK*. Предварительно собран образ *fluentd* с конфигурационным файлом (https://hub.docker.com/repository/docker/is217175/fluentd).
+2. В [docker-compose.yml](docker/docker-compose.yml) внесены изменения. К сервисам *post* и *ui* подключил логирование с драйвером *fluentd*. Теперь эти сервисы отправляют все логи в *fluentd*-сервис.
+3. К конфигурационный файл *fluentd* внесены изменения для парсинга принимаемых логов:
+```conf
+<filter service.post>
+  @type parser
+  format json
+  key_name log
+</filter>
+
+<filter service.ui>
+  @type parser
+  format grok
+  grok_pattern %{RUBY_LOGGER}
+  key_name log
+</filter>
+
+<filter service.ui>
+  @type parser
+  format grok
+  grok_pattern service=%{WORD:service} \| event=%{WORD:event} \| request_id=%{GREEDYDATA:request_id} \| message='%{GREEDYDATA:message}'
+  key_name message
+  reserve_data true
+</filter>
+
+<filter service.ui>
+  @type parser
+  format grok
+  grok_pattern service=%{WORD:service} \| event=%{WORD:event} \| path=%{UNIXPATH:path} \| request_id=%{UUID:request_id} \| remote_addr=%{IP:remote_addr} \| method= %{WORD:method} \| response_status=%{NUMBER:response_status}
+  key_name message
+  reserve_data true
+</filter>
+```
+4. Через веб-интерфейс *kibana* создан индекс fluentd-*
+5. Добавлен сервис распределенного трейсинга *zipkin*. Трассировки запросов можно отследить в веб-интерфейсе сервиса.
+6. При работе с "поломанным" приложением обнаружил, что есть значительная задержка при открытии любого поста. С помощью *zipkin* были найдены трейсы медленных запросов:
+![Zipkin Bug](src_bugged/zipkin.png)
+По трейсу видно, что виной долгой обработки запросы является сервис *post*, имя *span* - *db_find_single_post*. В коде приложения по этим данным был найден метод *find_post*. В его коде найдена причина - вызов функции **time.sleep(3)**. После ее удаления нормальная работа сервиса была восстановлена.
