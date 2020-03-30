@@ -1,6 +1,8 @@
 # is217175_microservices
 ## doker-2
 <details>
+<summary>Подробнее</summary>
+
 1. Установлена программа *docker-machine* и настроено создание виртуальной машины с *docker* в *GCP*
 2. С помощью написанного [Dockerfile](docker-monolith/Dockerfile) собрал образ
 ```
@@ -33,6 +35,8 @@ a39a9add1cbb        25 hours ago        /bin/sh -c #(nop)  CMD ["/start.sh"]    
 
 ## docker-3
 <details>
+<summary>Подробнее</summary>
+
 1. Для сервисов приложения *comment*, *post* и *ui* были созданы *Dockerfile* для сборки
 ```
 $ docker images
@@ -81,6 +85,8 @@ is217175/comment    1.0                 b34dbe0c698e        26 hours ago        
 
 ## docker-4
 <details>
+<summary>Подробнее</summary>
+
 1. Установил *docker-compose*
 2. Протестировал создание различные типы сетей в *docker*: *none*, *host*, *bridge*.
 3. Распределил контейнера приложения по нескольким сетям:
@@ -103,6 +109,8 @@ reddit_ui_1        puma -w 2 --debug               Up      0.0.0.0:9292->9292/tc
 
 ## gitlab-ci-1
 <details>
+<summary>Подробнее</summary>
+
 1. С помощью *docker-machine* создан экземпляр виртуальной машины в *GCP*.
 2. На сервер установлен *Gitlab CI* `docker-compose up -d` [docker-compose.yml](gitlab-ci/docker-compose.yml).
 3. В *Gitlab CI* был создан проект *homework* и репозиторий в нем *exmaple*
@@ -210,6 +218,8 @@ ansible-playbook gitlab-runner_register.yml
 
 ## monitoring-1
 <details>
+<summary>Подробнее</summary>
+
 1. Микросервисная приложение запущено вместе с контейнером *prometheus*.
 2. Метрики собираются с каждого сервиса по *http://.../metrics*
 3. Из [docker-compose.yml](docker/docker-compose.yml) убраны директивы *build:*. Сборка сервисов выполняется скриптом:
@@ -255,6 +265,8 @@ make onlypush=1 # для загрузки образов
 
 ## monitoring-2
 <details>
+<summary>Подробнее</summary>
+
 1. Из файла *docker-compose.yml* вынесены сервисы мониторинга в файл *docker-compose-monitoring.yml*
 2. Создан сервис *cAdvisor* для мониторинга *docker контейнеров*.
 3. Создан сервис *grafana* для визуализации собираемых *prometehus* метрик и параметров.
@@ -435,6 +447,8 @@ stackdriver:
 
 ## Logging-1
 <details>
+<summary>Подробнее</summary>
+
 1. Создан [docker-compose-logging.yml](docker/docker-compose-logging.yml) файл. В нем описан запуск стека *EFK*. Предварительно собран образ *fluentd* с конфигурационным файлом (https://hub.docker.com/repository/docker/is217175/fluentd).
 2. В [docker-compose.yml](docker/docker-compose.yml) внесены изменения. К сервисам *post* и *ui* подключил логирование с драйвером *fluentd*. Теперь эти сервисы отправляют все логи в *fluentd*-сервис.
 3. К конфигурационный файл *fluentd* внесены изменения для парсинга принимаемых логов:
@@ -476,6 +490,9 @@ stackdriver:
 </details>
 
 ## Kubernetes-1
+<details>
+<summary>Подробнее</summary>
+
 1. Созданы шаблоны *контроллера Deployment* для микросервисов приложения *ui*, *comment*, *post* и базы данных *mongodb*.
 2. Согласно инструкции [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) выполнено развертывание в GCE kubernetes кластера.
 3. К кластеру применены файлы шаблоны приложения:
@@ -486,27 +503,62 @@ comment-deployment-5577c57487   1         1         1       41m   comment      i
 mongo-deployment-79b8b4c7fc     1         1         1       41m   post-db      mongo:3.2          app=post-db,pod-template-hash=79b8b4c7fc
 post-deployment-57988f6847      1         1         1       41m   post         is217175/post      app=post,pod-template-hash=57988f6847
 ui-deployment-848ff56f95        1         1         1       41m   ui           is217175/ui        app=ui,pod-template-hash=848ff56f95
-
+```
+```
 $ kubectl get pods -o wide
 NAME                                  READY   STATUS    RESTARTS   AGE   IP            NODE       NOMINATED NODE   READINESS GATES
 comment-deployment-5577c57487-grzmd   1/1     Running   0          41m   10.200.0.9    worker-0   <none>           <none>
 mongo-deployment-79b8b4c7fc-knzl9     1/1     Running   0          42m   10.200.0.7    worker-0   <none>           <none>
 post-deployment-57988f6847-wqbx9      1/1     Running   0          41m   10.200.0.8    worker-0   <none>           <none>
 ui-deployment-848ff56f95-bkp27        1/1     Running   0          41m   10.200.0.10   worker-0   <none>           <none>
-
+```
+```
 $ kubectl get deployments -o wide
 NAME                 READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES             SELECTOR
 comment-deployment   1/1     1            1           41m   comment      is217175/comment   app=comment
 mongo-deployment     1/1     1            1           42m   post-db      mongo:3.2          app=post-db
 post-deployment      1/1     1            1           41m   post         is217175/post      app=post
 ui-deployment        1/1     1            1           41m   ui           is217175/ui        app=ui
-
+```
+```
 $ kubectl get deployments -n kube-system -o wide
 NAME      READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                  SELECTOR
 coredns   2/2     2            2           52m   coredns      coredns/coredns:1.6.2   k8s-app=kube-dns
-
+```
+```
 $ kubectl get pods -n kube-system -o wide
 NAME                     READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
 coredns-5fb99965-5bh6t   1/1     Running   0          52m   10.200.0.2   worker-0   <none>           <none>
 coredns-5fb99965-5vt2p   1/1     Running   0          52m   10.200.0.3   worker-0   <none>           <none>
 ```
+</details>
+
+## Kubernetes-2
+1. Установлен *minikube* и *kubectl*. С помощью *minikude* развернут локальный кластер.
+2. Созданы ресурсы *Deployment* для приложений *ui*, *comment*, *post* и базы данных *mongodb*.
+3. Созданы ресурсы *Service* для приложений *comment*, *post* и базы данных *mongodb*.
+4. Для обеспечения доступа снаружи применен тип *NodePort* сервиса *ui*.
+5. Запущен веб-интерфейс кластера (`minikube dashboard`).
+6. Создан новый неймспейс *dev* и в нем развернуты все ранее созданные ресурсы.
+7. Создан кластер в среде *GKE* состоящий из двух нод. И добавлено правило фаервола для открытия диапазона tсp портов 30000-32767.
+8. В кластере на *GKE* создан неймспейс dev и в нем развернуты все ранее созданные ресурсы. Приложение работает:
+![Kubernetes in GKE](kubernetes/kuber.png)
+9. Веб-интерфейс начиная с версии kubernetes 1.15 более не доступен в *GKE*. Но [ClusterRoleBinding](kubernetes/reddit/kubernetes-dashboard-clusterrolebinding.yml) создан.
+
+```yml
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kubernetes-dashborard
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+  - apiGroup: core
+    kind: ServiceAccount
+    name: kubernetes-dashboard
+    namespace: kude-system
+```
+10. Созданы конфигурационные файлы terraform для автоматического создания кластера kubernetes в GKE (ресурсы кластера, пула нод и правила фаервола).
