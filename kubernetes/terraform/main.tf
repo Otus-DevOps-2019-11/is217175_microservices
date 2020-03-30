@@ -22,7 +22,19 @@ resource "google_container_cluster" "reddit-cluster" {
       issue_client_certificate = false
     }
   }
+
+  addons_config {
+    network_policy_config {
+      disabled = false
+    }
+  }
+
+  network_policy {
+    enabled  = true
+    provider = "CALICO"
+  }
 }
+
 
 resource "google_container_node_pool" "reddit-nodes" {
   name       = "reddit-node-pool"
@@ -38,7 +50,7 @@ resource "google_container_node_pool" "reddit-nodes" {
     disk_size_gb = 20
     disk_type    = "pd-ssd"
     preemptible  = false
-    machine_type = "g1-small"
+    machine_type = "n1-standard-1"
     tags         = var.nodes-tag
     metadata = {
       disable-legacy-endpoints = "true"

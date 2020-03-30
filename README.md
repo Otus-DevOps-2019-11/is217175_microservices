@@ -534,6 +534,9 @@ coredns-5fb99965-5vt2p   1/1     Running   0          52m   10.200.0.3   worker-
 </details>
 
 ## Kubernetes-2
+<details>
+<summary>Подробнее</summary>
+
 1. Установлен *minikube* и *kubectl*. С помощью *minikude* развернут локальный кластер.
 2. Созданы ресурсы *Deployment* для приложений *ui*, *comment*, *post* и базы данных *mongodb*.
 3. Созданы ресурсы *Service* для приложений *comment*, *post* и базы данных *mongodb*.
@@ -562,3 +565,25 @@ subjects:
     namespace: kude-system
 ```
 10. Созданы конфигурационные файлы terraform для автоматического создания кластера kubernetes в GKE (ресурсы кластера, пула нод и правила фаервола).
+</details>
+
+## Kubernetes-4
+1. Рассмотрены варианты работы сервисов с типами *ClusterIP* и *NodePort*. Обновлены манифесты и проверены в работе.
+2. С помощью типа сервиса *LoadBalancer* протестированы варианты работы с внешним балансировщиком нагрузки на базе *GCE*.
+3. Рассмотрена работа *Ingress* контроллера, HTTP балансировка на базе *GCE*. Создан манифест *Ingress* контроллера для микросервиса *ui*.
+4. Для включения защищенного HTTPS создан объект *Secret* и подключен к *Ingress* контроллера:
+```yaml
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ui-ingress
+data:
+  tls.crt: LS0tLS1CRUdJTiBD.....RS0tLS0tCg==
+  tls.key: LS0tLS1CRUdJTiBQ.....S0VZLS0tLS0K
+type: kubernetes.io/tls
+```
+5. Для ограничения доступа подов друг к другу настроен *NetworkPolicy*. Микросервисам бекэнда *comment* и *post* разрешено подключение к базе *mongodb*, а *ui* нет.
+6. Для хранения данных вне контейнеров рассмотрена работа с постоянными хранилищами *PersistentVolume*. Само хранилище может является отдельным диском в *GCE*.
+7. Рассмотрена работа *PersistentVolumeClaim* для запроса дискового хранилища, который может получить свободное место из *PersistentVolume*.
+При необходимости возможно создавать хранилища в автоматическом режиме использованием совместно StorageClass, из которого PersistentVolumeClaim будет запрашивать необходимое пространство.
