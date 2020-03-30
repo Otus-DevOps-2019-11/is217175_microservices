@@ -1,0 +1,23 @@
+
+---
+comment:
+  image:
+    repository: is217175/comment
+    tag: latest
+  service:
+    externalPort: 9292
+
+post:
+  image:
+    repository: is217175/post
+    tag: latest
+  service:
+    externalPort: 5000
+
+ui:
+  image:
+    repository: is217175/ui
+    tag: latest
+  service:
+    externalPort: 9292
+...
