@@ -434,6 +434,7 @@ stackdriver:
 </details>
 
 ## Logging-1
+<details>
 1. Создан [docker-compose-logging.yml](docker/docker-compose-logging.yml) файл. В нем описан запуск стека *EFK*. Предварительно собран образ *fluentd* с конфигурационным файлом (https://hub.docker.com/repository/docker/is217175/fluentd).
 2. В [docker-compose.yml](docker/docker-compose.yml) внесены изменения. К сервисам *post* и *ui* подключил логирование с драйвером *fluentd*. Теперь эти сервисы отправляют все логи в *fluentd*-сервис.
 3. К конфигурационный файл *fluentd* внесены изменения для парсинга принимаемых логов:
@@ -472,3 +473,40 @@ stackdriver:
 6. При работе с "поломанным" приложением обнаружил, что есть значительная задержка при открытии любого поста. С помощью *zipkin* были найдены трейсы медленных запросов:
 ![Zipkin Bug](src_bugged/zipkin.png)
 По трейсу видно, что виной долгой обработки запросы является сервис *post*, имя *span* - *db_find_single_post*. В коде приложения по этим данным был найден метод *find_post*. В его коде найдена причина - вызов функции **time.sleep(3)**. После ее удаления нормальная работа сервиса была восстановлена.
+</details>
+
+## Kubernetes-1
+1. Созданы шаблоны *контроллера Deployment* для микросервисов приложения *ui*, *comment*, *post* и базы данных *mongodb*.
+2. Согласно инструкции [Kubernetes The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way) выполнено развертывание в GCE kubernetes кластера.
+3. К кластеру применены файлы шаблоны приложения:
+```
+$ kubectl get rs -o wide
+NAME                            DESIRED   CURRENT   READY   AGE   CONTAINERS   IMAGES             SELECTOR
+comment-deployment-5577c57487   1         1         1       41m   comment      is217175/comment   app=comment,pod-template-hash=5577c57487
+mongo-deployment-79b8b4c7fc     1         1         1       41m   post-db      mongo:3.2          app=post-db,pod-template-hash=79b8b4c7fc
+post-deployment-57988f6847      1         1         1       41m   post         is217175/post      app=post,pod-template-hash=57988f6847
+ui-deployment-848ff56f95        1         1         1       41m   ui           is217175/ui        app=ui,pod-template-hash=848ff56f95
+
+$ kubectl get pods -o wide
+NAME                                  READY   STATUS    RESTARTS   AGE   IP            NODE       NOMINATED NODE   READINESS GATES
+comment-deployment-5577c57487-grzmd   1/1     Running   0          41m   10.200.0.9    worker-0   <none>           <none>
+mongo-deployment-79b8b4c7fc-knzl9     1/1     Running   0          42m   10.200.0.7    worker-0   <none>           <none>
+post-deployment-57988f6847-wqbx9      1/1     Running   0          41m   10.200.0.8    worker-0   <none>           <none>
+ui-deployment-848ff56f95-bkp27        1/1     Running   0          41m   10.200.0.10   worker-0   <none>           <none>
+
+$ kubectl get deployments -o wide
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES             SELECTOR
+comment-deployment   1/1     1            1           41m   comment      is217175/comment   app=comment
+mongo-deployment     1/1     1            1           42m   post-db      mongo:3.2          app=post-db
+post-deployment      1/1     1            1           41m   post         is217175/post      app=post
+ui-deployment        1/1     1            1           41m   ui           is217175/ui        app=ui
+
+$ kubectl get deployments -n kube-system -o wide
+NAME      READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                  SELECTOR
+coredns   2/2     2            2           52m   coredns      coredns/coredns:1.6.2   k8s-app=kube-dns
+
+$ kubectl get pods -n kube-system -o wide
+NAME                     READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+coredns-5fb99965-5bh6t   1/1     Running   0          52m   10.200.0.2   worker-0   <none>           <none>
+coredns-5fb99965-5vt2p   1/1     Running   0          52m   10.200.0.3   worker-0   <none>           <none>
+```

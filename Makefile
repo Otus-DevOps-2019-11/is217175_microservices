@@ -1,5 +1,5 @@
 USERNAME:=is217175
-DIRS:=monitoring bugged logging
+DIRS:=monitoring src logging
 TARGETS:=$(shell find $(DIRS) -name Dockerfile -exec sed -n 's/LABEL imagename=\"\(.*\)\" version=\"\(.*\)\"/\1/p' {} \;)
 
 DOCKERFILE=$(shell find $(DIRS) -name Dockerfile -exec grep -rl "imagename=\"$@\"" {} \;)
