@@ -593,6 +593,9 @@ type: kubernetes.io/tls
 </details>
 
 ## Kubernetes-4
+<details>
+<summary>Подробнее</summary>
+
 1. Установлен *helm*.
 2. Манифесты *kubernetes* микросервиса *ui* перенесены в чарт *helm*, который после установлен `helm install --name test-ui-1 ui/`.
 3. Манифесты  шаблонизированы, а переменные объявлены в файле *values.yaml* чарта.
@@ -633,3 +636,143 @@ type: kubernetes.io/tls
     ...
     ```
     Это не помешает выполнению пайплайна в случае его запуска коммитом.
+</details>
+
+## Kubernetes-5
+1. Установлен *prometheus* с помощью *helm* пакета из репозитория.
+2. Конфигом [custom_values.yaml](kubernetes/Charts/prometheus/custom_values.yaml) подключен сбор следующих метрик:
+- меткрики API-сервера
+- метрики нод (*cAdvisor*)
+- метрики *node_exporter*
+- метрики приложения
+3. Настроен релейблинг для каждой компоненты приложения в зависимости от окружения:
+```yaml
+- job_name: 'post-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_label_app, __meta_kubernetes_service_label_component]
+            action: keep
+            regex: reddit;post
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: kubernetes_name
+
+      - job_name: 'comment-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_label_app, __meta_kubernetes_service_label_component]
+            action: keep
+            regex: reddit;comment
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: kubernetes_name
+
+      - job_name: 'ui-endpoints'
+        kubernetes_sd_configs:
+          - role: endpoints
+        relabel_configs:
+          - source_labels: [__meta_kubernetes_service_label_app, __meta_kubernetes_service_label_component]
+            action: keep
+            regex: reddit;ui
+          - action: labelmap
+            regex: __meta_kubernetes_service_label_(.+)
+          - source_labels: [__meta_kubernetes_namespace]
+            target_label: kubernetes_namespace
+          - source_labels: [__meta_kubernetes_service_name]
+            target_label: kubernetes_name
+```
+4. Шаблоны дашбоардов *grafana* были модифицированы - добавлена переменная окружения. Теперь графики каждого окружения можно просматривать отдельно друг от друга ([Business_Logic_Monitoring.json](monitoring/grafana/dashboards/Business_Logic_Monitoring.json) и [UI_Service_Monitoring.json](monitoring/grafana/dashboards/UI_Service_Monitoring.json)).
+5. Запущен *alertmanager* и настроены оповещения в slack чат о проблемах доступности API-сервера и нод:
+```yaml
+...
+alertmanagerFiles:
+  alertmanager.yml:
+    global:
+      slack_api_url: 'https://hooks.slack.com/services/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fjcBI4a'
+
+    route:
+      receiver: 'slack-notifications'
+
+    receivers:
+      - name: 'slack-notifications'
+        slack_configs:
+        - channel: '#dmitrii_isupov'
+...
+serverFiles:
+  alerting_rules.yml:
+    groups:
+      - name: Instances
+        rules:
+          - alert: InstanceDown
+            expr: up{job=~"kubernetes-(apiservers|nodes)"} == 1
+            for: 1m
+            labels:
+              severity: control
+            annotations:
+              description: '{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 1 minute.'
+              summary: 'Instance {{ $labels.instance }} down'
+  ...
+  ```
+6. Альтернативный способ запуска инфраструктуры мониторинга - *Prometheus Operator*. Установлен в кластер пакетом helm `helm install prometheus-operator stable/prometheus-operator -f values.yml`. Небольшая настройка в файле [values.yml](kubernetes/prometheus-operator/values.yaml) для включения веб-доступа:
+```yaml
+prometheus:
+  enabled: true
+
+  ingress:
+    enabled: true
+    annotations:
+      kubernetes.io/ingress.class: nginx
+    hosts:
+      - reddit-prometheus
+```
+
+Для мониторинга сервиса *post* применен [ServiceMonitor](kubernetes/prometheus-operator/post-servicemonitor.yml) (crd сущность оператора):
+```yaml
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: post-endpoints
+  labels:
+    app: reddit
+    component: monitoring
+    release: prometheus-operator
+spec:
+  jobLabel: post-endpoints
+  endpoints:
+  - targetPort: 5000
+    path: /metrics
+    scheme: http
+    interval: 30s
+    scrapeTimeout: 10s
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_service_label_app, __meta_kubernetes_service_label_component]
+        action: keep
+        regex: reddit;post
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - sourceLabels: [__meta_kubernetes_namespace]
+        targetLabel: kubernetes_namespace
+      - sourceLabels: [__meta_kubernetes_service_name]
+        targetLabel: kubernetes_name
+  selector:
+    matchLabels:
+      app: reddit
+      component: post
+  namespaceSelector:
+    matchNames:
+      - default
+      - production
+      - staging
+```
+![prometheus-operator](kubernetes/prometheus-operator/prometheus-monitor.png)
+Контроллер ищет доступные *ServiceMonitor* по метке **release: prometheus-operator**.
+
+7. В кластере для целей логирования установлены *ElasticSearch*, *Fluentd*, *Kibana*. Создан [helm-чарт *efk*](kubernetes/Charts/efk) для установки стека *EFK*.
