@@ -1,0 +1,36 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: post-endpoints
+  labels:
+    app: reddit
+    component: monitoring
+    release: prometheus-operator
+spec:
+  jobLabel: post-endpoints
+  endpoints:
+  - targetPort: 5000
+    path: /metrics
+    scheme: http
+    interval: 30s
+    scrapeTimeout: 10s
+    relabelings:
+      - sourceLabels: [__meta_kubernetes_service_label_app, __meta_kubernetes_service_label_component]
+        action: keep
+        regex: reddit;post
+      - action: labelmap
+        regex: __meta_kubernetes_service_label_(.+)
+      - sourceLabels: [__meta_kubernetes_namespace]
+        targetLabel: kubernetes_namespace
+      - sourceLabels: [__meta_kubernetes_service_name]
+        targetLabel: kubernetes_name
+  selector:
+    matchLabels:
+      app: reddit
+      component: post
+  namespaceSelector:
+    matchNames:
+      - default
+      - production
+      - staging

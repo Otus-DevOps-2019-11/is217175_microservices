@@ -1,0 +1,54 @@
+apiVersion: apps/v1beta2
+kind: StatefulSet
+metadata:
+  name: {{ include "elasticsearch.fullname" . }}
+  labels:
+    {{- include "elasticsearch.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "elasticsearch.fullname" . }}
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "elasticsearch.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "elasticsearch.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        name: {{ include "elasticsearch.fullname" . }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        ports:
+        - containerPort: {{ .Values.service.port }}
+          name: db
+          protocol: TCP
+        - containerPort: {{ .Values.transportPort }}
+          name: transport
+          protocol: TCP
+        volumeMounts:
+        - name: es-pvc-volume
+          mountPath: /data
+        {{- with .Values.environment }}
+        env:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      volumes:
+      - name: es-pvc-volume
+        persistentVolumeClaim:
+          claimName: {{ include "elasticsearch.name" . }}
+      # Elasticsearch requires vm.max_map_count to be at least 262144.
+      # If your OS already sets up this number to a higher value, feel free
+      # to remove this init container.
+      initContainers:
+      - image: alpine:3.6
+        command: ["/sbin/sysctl", "-w", "vm.max_map_count=262144"]
+        name: elasticsearch-logging-init
+        securityContext:
+          privileged: true

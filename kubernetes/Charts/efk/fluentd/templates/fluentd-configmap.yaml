@@ -1,0 +1,10 @@
+kind: ConfigMap
+apiVersion: v1
+{{- with .Values.configuration }}
+data:
+  {{- toYaml . | nindent 2 }}
+{{- end }}
+metadata:
+  name: {{ include "fluentd.fullname" . }}
+  labels:
+    addonmanager.kubernetes.io/mode: Reconcile
